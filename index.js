@@ -1,6 +1,3 @@
-
-login();
-
 let users={};
 let schedule={};
 let servicios={
@@ -8,8 +5,7 @@ let servicios={
     peluqueria:30000,
     unas:20000  
 }
-let emplo
-yees={
+let employees={
     "Juan":{
         servicio:"masajes",
         dia:"martes",
@@ -23,6 +19,9 @@ yees={
         horaFin:12
     }
 }
+login();
+
+
 
 function login() {
     let name;
@@ -57,8 +56,8 @@ function login() {
 }
 function validateLogin(id,password) {
 
-    if (users[id]) {
-        if (users[id][contrasena]==password) {
+    if (users[id]!=undefined) {
+        if (users[id]['contrasena']==password) {
             return true;
         }else{
             alert("Contraseña incorrecta");
@@ -70,30 +69,36 @@ function validateLogin(id,password) {
 }
 
 function program(id) {
-    let option = parseInt(prompt("1.Agendar cita"));
+    let option;
     let dia;
     let hora;
     let servicio;
     let empleado;
     do {
+        option = parseInt(prompt(`Usuario : ${users[id]['nombre']} \n 1.Agendar cita \n 2.Consultar cita \n 3.cerrar sesion` ));
         switch (option) {
             case 1:
                 selectionService(id);
-                scheduleAppointment(id);
                 break;
             case 2:
 
                 break;
+            case 3:
+                alert(` ${users[id]['nombre']} Adios, vuelva pronto `);
+        
+                break;
             default:
-
+                alert("Seleccione una opcion valida");
                 break;
         }
 
     } while (option!=3);
 }
 function selectionService(id) {
-    let option= parseInt(prompt("1. Masajes  $45000 \n 2. Peluqueria $30000\n 3. uñas $20000"));
+    let option;
     do {
+        option = parseInt(prompt("1. Masajes  $45000 \n 2. Peluqueria $30000\n 3. uñas $20000 \n 4. Cancelar"));
+   
         switch (option) {
             case 1:
                 selectEmployee(id,"masajes");
@@ -104,11 +109,13 @@ function selectionService(id) {
             case 3:
                 selectEmployee(id,"unas");
                 break;
+            case 4:
+                break;
             default:
+                alert("Seleccione una opcion valida");
                 break;
         }
-    } while (condition);
-    
+    } while (option!=4);
 }
 
 function selectEmployee(id,servicio) {
