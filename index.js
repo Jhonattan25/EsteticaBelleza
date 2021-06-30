@@ -1,69 +1,97 @@
-let users={};
+let users = {};
 let schedule={};
-let servicios={
+
+let services = {
+    1: {Nombre: 'Masaje', Precio: 45000},
+    2: {Nombre: 'Peluqueria', Precio: 30000},
+    3: {Nombre: 'Uñas', Precio: 20000}
+}
+
+/* let servicios={
     masajes:45000,
     peluqueria:30000,
     unas:20000  
-}
-let employees={
-    "Juan":{
-        servicio:"masajes",
-        dia:"martes",
-        horaInicio:9,
-        horaFin:12
+}; */
+let employees = {
+    1: {
+        Nombre: 'Juan',
+        Servicio: 1,
+        Dia: "Martes",
+        HoraInicio: 9,
+        HoraFin: 12,
+        Disponibilidad: true
     },
-    "Pedro":{
-        servicio:"peliqueria",
-        dia:"miercoles",
-        horaInicio:9,
-        horaFin:12
+    2: {
+        Nombre: 'Pedo',
+        Servicio: 2,
+        Dia: "Miercoles",
+        HoraInicio: 9,
+        HoraFin :12,
+        Disponibilidad: true
+    },
+    3: {
+        Nombre: 'Pepe',
+        Servicio: 1,
+        Dia: "Jueves",
+        HoraInicio: 9,
+        HoraFin: 12,
+        Disponibilidad: true
     }
-}
+};
 login();
-
-
-
 function login() {
     let name;
     let option;
     let id;
     let password;
     do {
-        option=parseInt(prompt("Ingrese la opcion \n 1. Iniciar Sesion \n 2. Registrar usuario \n 3. Salir"));
+        option = parseInt(prompt('Ingrese el numero de la opción que desee: \n 1. Iniciar Sesion \n 2. Registrar usuario \n 3. Salir de la aplicación'));
         switch(option){
             case 1:
-                id=prompt("Ingrese Cedula");
-                password=prompt("Ingrese Contraseña");
-                if(validateLogin(id,password)){
+                id = prompt('Ingrese Cedula');
+                password = prompt('Ingrese Contraseña');
+                if(validateLogin(id, password)){
                     program(id);
                 }   
                 break;
             case 2:
-                id=prompt("Ingrese Cedula");
-                name=prompt("Ingrese Nombre");
-                password=prompt("Ingrese Contraseña");
-                registerUser(id,password,name);
+                id = prompt('Ingrese Cedula');
+                name = prompt('Ingrese Nombre');
+                password = prompt('Ingrese Contraseña');
+                registerUser(id, name, password);
                 break;
             case 3:
-                alert("Gracias por usar la aplicacion");
+                alert("Gracias por usar la aplicación");
                 break;
             default:
-                alert("Seleccione una opcion valida");
+                alert("Seleccione una opción valida");
             break;
 
         }
-    } while (option!=3);
+    } while (option != 3);
 }
-function validateLogin(id,password) {
 
-    if (users[id]!=undefined) {
-        if (users[id]['contrasena']==password) {
+function registerUser(id, name, password) {  
+    let user = {
+        nombre: name,
+        contrasena: password,
+        masajes: null,
+        peluqueria: null,
+        unas: null
+    };
+    users[id] = user;
+    alert("Usuario Registrado");
+}
+
+function validateLogin(id, password) {
+    if(users[id]) {
+        if (users[id]['contrasena'] === password) {
             return true;
         }else{
             alert("Contraseña incorrecta");
         }
     }else{
-        alert("Usuario no existe");
+        alert(`El usuario con id( ${id} ) no se encuentra registrado`);
     }
     return false;
 }
@@ -75,10 +103,10 @@ function program(id) {
     let servicio;
     let empleado;
     do {
-        option = parseInt(prompt(`Usuario : ${users[id]['nombre']} \n 1.Agendar cita \n 2.Consultar cita \n 3.cerrar sesion` ));
+        option = parseInt(prompt(`Usuario: ${users[id]['nombre']}\nIngrese el numero de la opción que desee: \n 1. Agendar cita\n 2. Consultar cita\n 3. Cerrar sesión` ));
         switch (option) {
             case 1:
-                selectionService(id);
+                scheduleAppointment(id);
                 break;
             case 2:
 
@@ -88,55 +116,65 @@ function program(id) {
         
                 break;
             default:
-                alert("Seleccione una opcion valida");
+                alert('Seleccione una opción valida');
                 break;
         }
 
     } while (option!=3);
 }
-function selectionService(id) {
-    let option;
-    do {
-        option = parseInt(prompt("1. Masajes  $45000 \n 2. Peluqueria $30000\n 3. uñas $20000 \n 4. Cancelar"));
-   
-        switch (option) {
-            case 1:
-                selectEmployee(id,"masajes");
-                break;
-            case 2:
-                selectEmployee(id,"peluqueria");
-                break;
-            case 3:
-                selectEmployee(id,"unas");
-                break;
-            case 4:
-                break;
-            default:
-                alert("Seleccione una opcion valida");
-                break;
-        }
-    } while (option!=4);
-}
 
-function selectEmployee(id,servicio) {
-    let names="";
-    for (const key in employees) {
-            if (employees[key].servicio==servicio) {
-                names+=key +" "+employees[key].servicio +"\n";
-            }
+function scheduleAppointment(id){
+    let keyService = selectionService();
+
+    if(keyService !== 0){
+
+        selectEmployee(keyService);
     }
-    let name=prompt(`${names} Ingrese el nombre`);
-
 }
 
-function registerUser(id,password,name) {  
-    let user={
-        nombre:name,
-        contrasena:password,
-        masajes:null,
-        peluqueria:null,
-        unas:null
-    };
-    users[id]=user;
-    alert("Usuario Registrado");
+function selectionService() {
+    let option;
+    let message = '';
+
+    for (const key in services) {
+        message += `${key}:\n`;
+        for (const key2 in services[key]) {
+            message += `${key2}: ${services[key][key2]} \n`;
+        }
+    }
+
+    do {
+        option = parseInt(prompt(`Ingrese el numero del servicio que desee\n${message}0: Cancelar`));
+
+        if(option != 0 && !(services[option])){
+            alert('Seleccione una opción valida');
+        }
+    } while (option != 0 && !(services[option]));
+
+    return option;
+}
+
+function selectEmployee(keyService) {
+    let option;
+    let message = '';
+
+    for (const key in employees) {
+        if(employees[key]['Servicio'] === keyService){
+            message += `${key}:\n`;
+            for (const key2 in employees[key]) {
+                if(key2 !== 'Servicio' && key2 !== 'Disponibilidad' && employees[key]['Disponibilidad'] === true){
+                    message += `${key2}: ${employees[key][key2]} \n`;
+                }
+            }
+        }
+    }
+    do {
+        option = parseInt(prompt(`Empleados disponibles del servicio ${services[keyService]['Nombre']}\nIngrese el numero del empleado que desee\n${message}0: Cancelar`));
+
+        if(option != 0 && !(employees[option])){
+            alert('Seleccione una opción valida');
+        }
+    } while (option != 0 && !(employees[option]));
+
+    return option;
 }
